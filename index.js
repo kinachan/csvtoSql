@@ -21,7 +21,7 @@ file.addEventListener('change', (ev) => {
     const uniArray = Encoding.convert(sjisArray, 'UNICODE', 'SJIS');
     const text = Encoding.codeToString(uniArray);
     
-    const rows = text.split(/\r\n/);
+    const rows = text.split(/\n/);
     const headerArray = rows[0].split(',');
     const header = headerArray.map(x => x.replace(/"/g, ''));
     console.log(`[log] header.length is ${header.length} `);
