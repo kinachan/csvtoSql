@@ -22,9 +22,9 @@ const toCsvText = (result) => {
 
 columnInfoElem.addEventListener('change', (ev) => {
   const read = new FileReader();
-  reader.readAsBinaryString(ev.target.files[0]);
+  read.readAsBinaryString(ev.target.files[0]);
 
-  reader.onload = (event) => {
+  read.onload = (event) => {
     const text = toCsvText(event.target.result);
     const rows = text.split(/\n/);
     const detail = rows.splice(1);
