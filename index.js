@@ -52,8 +52,11 @@ const convertValue = (value, headerName) => {
     return finishConvert();
   }
   if (target.type === 'NUMBER') {
-    return value;
+    return finishConvert();
   } else {
+    if (value === '') {
+      return finishConvert();
+    }
     return `'${value}'`;
   }
 }
