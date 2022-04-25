@@ -37,6 +37,23 @@ columnInfoElem.addEventListener('change', (ev) => {
   };
 })
 
+const convertValue = (value, headerName) => {
+  const finishConvert = () => value === '' ? 'null' : value;
+
+  if (columnInfo == null) {
+    return finishConvert();
+  }
+  const target = columnInfo.find(x =>x.name === headerName);
+  if (target == null) {
+    return finishConvert();
+  }
+  if (target.type === 'NUMBER') {
+    return value;
+  } else {
+    return `'${value}'`;
+  }
+}
+
 
 file.addEventListener('change', (ev) => {
 
@@ -58,7 +75,7 @@ file.addEventListener('change', (ev) => {
       const row = item.split(',').map(m => m.replace(/"/g, ''));
       console.log(`[log] row.length is ${row.length} `);
 
-      const values = row.map(r => r === '' ? 'null' : r);
+      const values = row.map((r, i) => convertValue(r, header[i]));
       const addEmptyCell = () => {
         if (values.length === header.length) {
           return;
