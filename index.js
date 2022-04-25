@@ -29,10 +29,14 @@ columnInfoElem.addEventListener('change', (ev) => {
     const rows = text.split(/\n/);
     const detail = rows.splice(1);
 
-    const results = detail.map(d => ({
-      name: d[0],
-      type: d[1],
-    }));
+    const results = detail.map(d => {
+      const _row = d.split(',');
+
+      return {
+        name: _row[0],
+        type: _row[1],
+      }
+    });
     columnInfo = results;
   };
 })
