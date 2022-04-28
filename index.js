@@ -3,11 +3,16 @@
 const file = document.getElementById('file-upload');
 const tableNameElement = document.getElementById('table-name');
 const columnInfoElem = document.getElementById('column-info');
+const sqlExportButton = document.getElementById('sql-export');
+const resultArea = document.getElementById('result-area');
+
 let columnInfo = null;
 
-function str2Array(str) {
-  var array = [],i,il=str.length;
-  for(i=0;i<il;i++) array.push(str.charCodeAt(i));
+const str2Array = (str) => {
+  let array = [];
+  for (let i = 0; i < str.length; i++) {
+    array.push(str.charCodeAt(i));
+  }
   return array;
 }
 
@@ -18,6 +23,27 @@ const toCsvText = (result) => {
 
   return text;
 }
+
+sqlExportButton.addEventListener('click', (ev) => {
+  if (resultArea.innerText === '') {
+    alert('SQLの出力をしてください。');
+    return;
+  }
+
+  const text = resultArea.innerText;
+  const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+  const blob = new Blob([ bom, text ], { "type" : "txt" });
+
+
+  const a = document.createElement('a');
+  a.download = `${tableNameElement.value}.txt`;
+  a.href = window.URL.createObjectURL(blob);
+  a.target = '_blank';
+  a.click();
+  URL.revokeObjectURL(a.href);
+
+
+});
 
 
 columnInfoElem.addEventListener('change', (ev) => {
@@ -30,11 +56,11 @@ columnInfoElem.addEventListener('change', (ev) => {
     const detail = rows.splice(1);
 
     const results = detail.map(d => {
-      const _row = d.split(',');
+      const row = d.split(',');
 
       return {
-        name: _row[0],
-        type: _row[1],
+        name: row[0],
+        type: row[1],
       }
     });
     columnInfo = results;
@@ -74,15 +100,13 @@ file.addEventListener('change', (ev) => {
     const rows = text.split(/\n/);
     const headerArray = rows[0].split(',');
     const header = headerArray.map(x => x.replace(/"/g, ''));
-    const body = rows.splice(1);
+    const bodies = rows.splice(1);
 
     const sqlSentence = `INSERT INTO ${tableName} (${header.join(',')})`;
 
-    const sql = body.map((item) => {
-      const row = item.split(',').map(m => m.replace(/"/g, ''));
-      console.log(`[log] row.length is ${row.length} `);
-
-      const values = row.map((r, i) => convertValue(r, header[i]));
+    const sql = bodies.map((body) => {
+      const row = body.split(',').map(m => m.replace(/"/g, ''));
+      const values = row.map((cell, i) => convertValue(cell, header[i]));
       const addEmptyCell = () => {
         if (values.length === header.length) {
           return;
@@ -95,8 +119,7 @@ file.addEventListener('change', (ev) => {
       return `${sqlSentence} VALUES(${values});`;
     });
 
-    const resultArea = document.getElementById('result-area');
+
     resultArea.innerText = sql.join('\n');
-    
   };
 });
