@@ -36,7 +36,7 @@ sqlExportButton.addEventListener('click', (ev) => {
 
 
   const a = document.createElement('a');
-  a.download = `${tableNameElement.value}.txt`;
+  a.download = `${tableNameElement.value}.sql`;
   a.href = window.URL.createObjectURL(blob);
   a.target = '_blank';
   a.click();
